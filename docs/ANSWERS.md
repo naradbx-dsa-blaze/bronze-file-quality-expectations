@@ -78,14 +78,15 @@ GROUP BY source_file;
 This is the vendor-facing report: "file X had N bad rows." No `event_log()`
 parsing required.
 
-### 4. (Optional) enforce whole-file accept/reject
-If a partially-bad file must be rejected **entirely** (even its good rows),
-aggregate per file and gate downstream:
+### 4. Enforce whole-file accept/reject (the primary requirement here)
+Since the goal is to **accept clean files and reject a problematic file
+entirely** (not just its bad rows), aggregate per file and gate downstream:
 ```sql
 -- fq_file_quality_summary: one row per file, file_accepted = (failed_rows = 0)
 -- fq_silver_payments: promote rows only WHERE file_accepted
 ```
-This gives true file-atomic semantics that expectations alone cannot express.
+This gives true file-atomic semantics that expectations alone cannot express:
+File 2 is rejected in full (including its good rows), while Files 1 & 3 pass.
 
 ---
 
@@ -93,8 +94,9 @@ This gives true file-atomic semantics that expectations alone cannot express.
 
 | Requirement | Use |
 |---|---|
-| Keep every valid row; isolate bad rows; report the file | `fq_bronze_clean` + `fq_bronze_quarantine` (recommended default) |
-| Reject the **entire** file if any row is bad | add `fq_file_quality_summary` + `fq_silver_payments` |
+| **Reject the entire file if any row is bad** (whole-file accept/reject) | `fq_file_quality_summary` + `fq_silver_payments` — **recommended for this use case** |
+| Report exactly which file was problematic | `fq_bronze_quarantine` grouped by `source_file` |
+| Keep valid rows even from a partially-bad file (row-level salvage) | `fq_bronze_clean` |
 | Observability / alerting on failure rates | `EXPECT` (WARN) metrics from the event log |
 
 ---

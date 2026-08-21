@@ -63,7 +63,7 @@ So instead of forcing file-level behavior into expectations, this repo builds it
           ┌───────────────────────────────────────────────┐
           │ fq_silver_payments   (MATERIALIZED VIEW)       │
           │  rows only from fully-clean files              │
-          │  (optional whole-file rejection)               │
+          │  (whole-file rejection — primary output)        │
           └───────────────────────────────────────────────┘
 ```
 
@@ -74,7 +74,7 @@ So instead of forcing file-level behavior into expectations, this repo builds it
 | `fq_bronze_clean` | Streaming table | **Row-level** acceptance — valid rows from every file |
 | `fq_bronze_quarantine` | Streaming table | Invalid rows + `source_file` — the vendor report |
 | `fq_file_quality_summary` | Materialized view | **File-level** accept/reject decision |
-| `fq_silver_payments` | Materialized view | Optional **whole-file** acceptance (rejects entire bad file) |
+| `fq_silver_payments` | Materialized view | **Whole-file** acceptance — rejects an entire bad file (primary output) |
 
 ---
 
@@ -111,12 +111,14 @@ GROUP BY source_file;
 -- payments_2024_02.json | 2
 ```
 
-**Q: Accept good files, reject only the bad one?**
+**Q: Accept good files, reject the bad one entirely?**
 
-- *Row-level* (recommended default): `fq_bronze_clean` already contains the good
-  rows from every file.
-- *Whole-file* (strict): `fq_file_quality_summary` gives the accept/reject flag,
-  and `fq_silver_payments` promotes rows only from fully-clean files.
+- *Whole-file* (**recommended for this use case**): `fq_file_quality_summary`
+  gives the per-file accept/reject flag, and `fq_silver_payments` promotes rows
+  only from fully-clean files — so File 2 is rejected in full while Files 1 & 3
+  pass.
+- *Row-level* (alternative — salvage the good rows): `fq_bronze_clean` keeps the
+  valid rows from every file, including the good rows of a partially-bad file.
 
 See [`docs/ANSWERS.md`](docs/ANSWERS.md) for the full write-up of the original
 questions.
