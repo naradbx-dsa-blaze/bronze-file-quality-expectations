@@ -1,0 +1,28 @@
+# Databricks Asset Bundle — bronze file-level data-quality pattern
+# Deploy with:  databricks bundle deploy -t dev
+# Run with:     databricks bundle run file_quality_demo_job -t dev
+bundle:
+  name: bronze-file-quality-expectations
+
+variables:
+  catalog:
+    description: Target Unity Catalog catalog for the demo tables and volume.
+    default: main
+  schema:
+    description: Target schema. The pipeline writes all fq_* tables here.
+    default: file_quality_demo
+  volume:
+    description: Managed volume that holds the landing payment files.
+    default: fq_demo_landing
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    # Set your workspace host here, or deploy with a CLI profile:
+    #   databricks bundle deploy -t dev -p <your-profile>
+    workspace:
+      host: https://<your-workspace-host>.cloud.databricks.com

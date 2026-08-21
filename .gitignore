@@ -1,0 +1,15 @@
+# Databricks Asset Bundle
+.databricks/
+bundle.tf.json
+*.tfstate
+*.tfstate.backup
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

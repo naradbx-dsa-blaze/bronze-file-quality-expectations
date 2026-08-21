@@ -1,0 +1,5 @@
+{"payment_id": "P0011", "vendor_id": "V101", "payment_date": "2024-03-01", "amount": 2100.00, "currency": "USD"}
+{"payment_id": "P0012", "vendor_id": "V100", "payment_date": "2024-03-04", "amount": 560.25, "currency": "USD"}
+{"payment_id": "P0013", "vendor_id": "V104", "payment_date": "2024-03-07", "amount": 8800.00, "currency": "USD"}
+{"payment_id": "P0014", "vendor_id": "V102", "payment_date": "2024-03-12", "amount": 145.00, "currency": "USD"}
+{"payment_id": "P0015", "vendor_id": "V103", "payment_date": "2024-03-19", "amount": 1020.50, "currency": "USD"}

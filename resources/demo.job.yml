@@ -1,0 +1,21 @@
+resources:
+  jobs:
+    file_quality_demo_job:
+      name: file-quality-demo-setup-and-run
+      tasks:
+        # Task 1: create the volume and load the sample payment files.
+        - task_key: setup_data
+          notebook_task:
+            notebook_path: ../src/setup/create_volume_and_load.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              volume: ${var.volume}
+
+        # Task 2: run the declarative pipeline once setup is done.
+        - task_key: run_pipeline
+          depends_on:
+            - task_key: setup_data
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.file_quality_pipeline.id}
+            full_refresh: true

@@ -1,0 +1,14 @@
+resources:
+  pipelines:
+    file_quality_pipeline:
+      name: bronze-file-quality-expectations
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+      serverless: true
+      channel: CURRENT
+      # `source_path` is substituted into the SQL as ${source_path}.
+      configuration:
+        source_path: /Volumes/${var.catalog}/${var.schema}/${var.volume}/payments/
+      libraries:
+        - glob:
+            include: ../src/transformations/**
